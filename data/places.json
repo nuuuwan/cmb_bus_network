@@ -1,20 +1,222 @@
 {
-  "Borella Junction": [6.913152, 79.875484],
-  "De Appu Junction": [6.940098, 79.87822],
-  "Dematagoda Railway": [6.936875, 79.875483],
-  "Fort Railway": [6.93402, 79.850384],
-  "Liberty Roundabout": [6.912061, 79.851486],
-  "Maradana Railway": [6.929237, 79.865796],
-  "Mattakkuliya Bridge": [6.980516, 79.875353],
-  "R Premadasa Stadium": [6.939998, 79.87229],
-  "Singer MEGA": [6.911302, 79.877433],
-  "Spa Ceylon, Bambalapitiya": [6.895455, 79.854713],
-  "St Peter's College": [6.88095, 79.861782],
-  "St. Anthony's Kochchikade": [6.946861, 79.856139],
-  "Sugathadasa Stadium": [6.948183, 79.868866],
-  "Thunmulla": [6.898781, 79.860545],
-  "Town Hall": [6.917301, 79.864813],
-  "BRC Grounds, Haveloock Rd": [6.888066811338651, 79.86427500643622],
-  "Kirula Rd-Baseline Rd": [6.892389348966703, 79.8770286262943],
-  "High Level Rd-Baseline Rd": [6.878269527068448, 79.87641126938567]
+  "Ananda College, Maradana Rd, Colombo 10": [
+    6.924344,
+    79.868403
+  ],
+  "Arpico Super Centre, Wellawatte": [
+    6.86909,
+    79.862275
+  ],
+  "BMICH": [
+    6.901256,
+    79.873543
+  ],
+  "BRC Grounds, Haveloock Rd": [
+    6.888067,
+    79.864275
+  ],
+  "Baseline Rd. Railway Station": [
+    6.926355,
+    79.877881
+  ],
+  "Baurs, Grandpass": [
+    6.942341,
+    79.866097
+  ],
+  "Canal Bankk Rd-Namdimithra Pl": [
+    6.874402,
+    79.874004
+  ],
+  "Christ Church Cathedral, Mutwal": [
+    6.954491,
+    79.859251
+  ],
+  "DMT Maligawatta": [
+    6.932093,
+    79.86684
+  ],
+  "De Appu Junction": [
+    6.93529,
+    79.874939
+  ],
+  "Dematagoda Railway": [
+    6.935748,
+    79.879837
+  ],
+  "Elie House Park": [
+    6.960923,
+    79.865706
+  ],
+  "Fergusons's Rd": [
+    6.96281,
+    79.874885
+  ],
+  "Gunasinghe Playground": [
+    6.937744,
+    79.856251
+  ],
+  "Jayasekararama Temple": [
+    6.926433,
+    79.87236
+  ],
+  "Kirula Rd-Baseline Rd": [
+    6.892389,
+    79.877029
+  ],
+  "Kotahena Police": [
+    6.949039,
+    79.858935
+  ],
+  "Legal Draftsman's Dept.": [
+    6.934522,
+    79.861508
+  ],
+  "Liberty Roundabout": [
+    6.912061,
+    79.851486
+  ],
+  "Lotus Tower": [
+    6.92796,
+    79.858891
+  ],
+  "Madampitiya Cemetary": [
+    6.959596,
+    79.871967
+  ],
+  "Maligawatta Muslim Burial Grounds": [
+    6.940095,
+    79.876688
+  ],
+  "Meeraniya St-Princess Gate": [
+    6.936838,
+    79.864135
+  ],
+  "Min. of Consumer Affairs": [
+    6.923031,
+    79.854972
+  ],
+  "Nawagampura Playground": [
+    6.946367,
+    79.877018
+  ],
+  "Pelpola Vipassi Foundation": [
+    6.908121,
+    79.884543
+  ],
+  "Port of Colombo": [
+    6.941673,
+    79.838978
+  ],
+  "R Premadasa Stadium": [
+    6.939998,
+    79.87229
+  ],
+  "Savoy Cinema, Wellawatte": [
+    6.879289,
+    79.859793
+  ],
+  "Singer MEGA": [
+    6.911302,
+    79.877433
+  ],
+  "Slave Island Railway Station": [
+    6.923654,
+    79.849624
+  ],
+  "St Joseph's Boys School, Grandpas": [
+    6.948809,
+    79.873072
+  ],
+  "St Lucia's Cathedral, Kotahena": [
+    6.948093,
+    79.864764
+  ],
+  "St Mary's Church, Colombo 15": [
+    6.971337,
+    79.877295
+  ],
+  "Sugathadasa Stadium": [
+    6.948183,
+    79.868866
+  ],
+  "Tower Hall, Theatre": [
+    6.930806,
+    79.864913
+  ],
+  "Vivekananda College, Grandpass": [
+    6.943479,
+    79.859896
+  ],
+  "Dialog, Union Place": [
+    6.918245,
+    79.862619
+  ],
+  "Zahira College, Deans Rd": [
+    6.925921,
+    79.864997
+  ],
+  "Sri Vajirangana Temple": [
+    6.928943,
+    79.868705
+  ],
+  "Malay St": [
+    6.925382,
+    79.850406
+  ],
+  "Gold Market": [
+    6.939874,
+    79.852114
+  ],
+  "People's Bank, Dam Street": [
+    6.937224,
+    79.859467
+  ],
+  "Kotahena Jr. School": [
+    6.942875,
+    79.863234
+  ],
+  "Sri Kailasanathar Swami Temple": [
+    6.942558,
+    79.854591
+  ],
+  "Ocean University": [
+    6.96496,
+    79.871611
+  ],
+  "Sumathipura": [
+    6.977866,
+    79.878271
+  ],
+  "Amachi, Hampden Ln": [
+    6.874491,
+    79.866039
+  ],
+  "NIBM, Baseline Rd": [
+    6.880852,
+    79.87648
+  ],
+  "Vajirarama Temple": [
+    6.890663,
+    79.857561
+  ],
+  "Elvitigala Flats": [
+    6.903061,
+    79.878405
+  ],
+  "Welikada Prison Badminton Courts": [
+    6.919122,
+    79.88016
+  ],
+  "NTB Bank, Nawam Mw": [
+    6.918553,
+    79.851852
+  ],
+  "St. Bridget's Primary": [
+    6.909061,
+    79.865807
+  ],
+  "RA de Mel Mw-Alfred Pl": [
+    6.902119,
+    79.854739
+  ]
 }
