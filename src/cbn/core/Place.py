@@ -75,7 +75,11 @@ class Place:
                 n_filled += 1
         if n_filled > 0:
             data_file = cls.get_data_file()
-            idx = {place.name: place.latlng for place in places}
+            places.sort(key=lambda p: p.name)
+            idx = {
+                place.name: [round(x, cls.PRECISION) for x in place.latlng]
+                for place in places
+            }
             data_file.write(idx)
             log.info(f"Filled latlng for {n_filled} places")
 
