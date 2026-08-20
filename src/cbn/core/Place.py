@@ -1,9 +1,13 @@
 import os
 from dataclasses import dataclass
+from functools import cache
 from math import floor
 from typing import List
 
 from geopy.geocoders import Nominatim
+from gig import Ent, EntType
+from shapely.geometry import Point
+from shapely.ops import unary_union
 from utils_future import JSONFile, Log
 
 log = Log("Place")
@@ -17,6 +21,7 @@ class Place:
     PRECISION = 6
     GRID_LATITUDE = 0.01
     GRID_LONGITUDE = 0.01
+    COLOMBO_DSD_IDS = {"LK-1103", "LK-1127"}
 
     @classmethod
     def get_data_file(cls) -> JSONFile:
@@ -48,6 +53,52 @@ class Place:
         return [cls(name, latlng) for name, latlng in idx.items()]
 
     @classmethod
+    @cache
+    def get_colombo_boundary(cls):
+        geometries = []
+        for gnd in Ent.list_from_type(EntType.GND):
+            if gnd.dsd_id in cls.COLOMBO_DSD_IDS:
+                geometries.extend(gnd.geo().geometry)
+        return unary_union(geometries)
+
+    @classmethod
+    def get_grid_cells(cls):
+        boundary = cls.get_colombo_boundary()
+        min_lng, min_lat, max_lng, max_lat = boundary.bounds
+        latitude_cells = range(
+            floor(min_lat / cls.GRID_LATITUDE),
+            floor(max_lat / cls.GRID_LATITUDE) + 1,
+        )
+        longitude_cells = range(
+            floor(min_lng / cls.GRID_LONGITUDE),
+            floor(max_lng / cls.GRID_LONGITUDE) + 1,
+        )
+        return {
+            (latitude, longitude)
+            for latitude in latitude_cells
+            for longitude in longitude_cells
+            if boundary.covers(
+                Point(
+                    (longitude + 0.5) * cls.GRID_LONGITUDE,
+                    (latitude + 0.5) * cls.GRID_LATITUDE,
+                )
+            )
+        }
+
+    @classmethod
+    def get_uncovered_grid_cells(cls, places=None):
+        places = cls.list() if places is None else places
+        occupied = {
+            (
+                floor(place.latlng[0] / cls.GRID_LATITUDE),
+                floor(place.latlng[1] / cls.GRID_LONGITUDE),
+            )
+            for place in places
+            if place.latlng is not None
+        }
+        return cls.get_grid_cells() - occupied
+
+    @classmethod
     def fill_all_latlng(cls):
         places = cls.list()
         n_filled = 0
@@ -66,29 +117,9 @@ class Place:
 
     @classmethod
     def analyze_coverage(cls):
-        places = [place for place in cls.list() if place.latlng is not None]
-        occupied = {
-            (
-                floor(place.latlng[0] / cls.GRID_LATITUDE),
-                floor(place.latlng[1] / cls.GRID_LONGITUDE),
-            )
-            for place in places
-        }
-        latitude_cells = range(
-            min(cell[0] for cell in occupied),
-            max(cell[0] for cell in occupied) + 1,
-        )
-        longitude_cells = range(
-            min(cell[1] for cell in occupied),
-            max(cell[1] for cell in occupied) + 1,
-        )
-        all_cells = {
-            (latitude, longitude)
-            for latitude in latitude_cells
-            for longitude in longitude_cells
-        }
-        uncovered = all_cells - occupied
-        n_all = len(all_cells)
+        colombo_cells = cls.get_grid_cells()
+        uncovered = cls.get_uncovered_grid_cells()
+        n_all = len(colombo_cells)
         n_covered = n_all - len(uncovered)
         log.info("-" * 32)
         log.info(f"Total grid cells: {n_all}")

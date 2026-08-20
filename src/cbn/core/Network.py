@@ -8,7 +8,7 @@ import geopandas as gpd
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
 from matplotlib.ticker import MultipleLocator
-from shapely.geometry import LineString, Point
+from shapely.geometry import LineString, Point, box
 from utils_future import File, Log
 
 from cbn.core.Place import Place
@@ -289,6 +289,37 @@ class Network:
             )
 
     @staticmethod
+    def _plot_colombo_boundary(ax, boundary):
+        gpd.GeoSeries([boundary], crs="EPSG:4326").plot(
+            ax=ax,
+            color="#f7f7f7",
+            edgecolor="#aaaaaa",
+            linewidth=1,
+            zorder=0,
+        )
+        min_lng, min_lat, max_lng, max_lat = boundary.bounds
+        ax.set_xlim(min_lng, max_lng)
+        ax.set_ylim(min_lat, max_lat)
+
+    @staticmethod
+    def _plot_uncovered_grid_cells(ax, boundary, uncovered_cells):
+        geometries = [
+            box(
+                longitude * Place.GRID_LONGITUDE,
+                latitude * Place.GRID_LATITUDE,
+                (longitude + 1) * Place.GRID_LONGITUDE,
+                (latitude + 1) * Place.GRID_LATITUDE,
+            ).intersection(boundary)
+            for latitude, longitude in uncovered_cells
+        ]
+        gpd.GeoSeries(geometries, crs="EPSG:4326").plot(
+            ax=ax,
+            color="#fde8e8",
+            edgecolor="none",
+            zorder=1,
+        )
+
+    @staticmethod
     def _add_route_legend(ax, route_geo):
         colors = plt.get_cmap("tab10").colors
         route_lines = [
@@ -318,8 +349,17 @@ class Network:
             spine.set_visible(False)
 
     @staticmethod
-    def _render_plot(stop_geo, route_geo, image_path, include_routes):
+    def _render_plot(
+        boundary,
+        uncovered_cells,
+        stop_geo,
+        route_geo,
+        image_path,
+        include_routes,
+    ):
         fig, ax = plt.subplots(figsize=(24, 24))
+        Network._plot_colombo_boundary(ax, boundary)
+        Network._plot_uncovered_grid_cells(ax, boundary, uncovered_cells)
         if include_routes:
             Network._plot_routes(ax, route_geo)
         Network._plot_stops(ax, stop_geo, route_geo)
@@ -339,8 +379,17 @@ class Network:
         plt.close(fig)
 
     def plot(self, include_routes=True):
+        boundary = Place.get_colombo_boundary()
+        uncovered_cells = Place.get_uncovered_grid_cells(self.stops)
         stop_geo = self._get_stop_geo()
         route_geo = self._get_route_geo()
         image_name = "places.png" if include_routes else "stops.png"
         image_path = os.path.join("images", image_name)
-        self._render_plot(stop_geo, route_geo, image_path, include_routes)
+        self._render_plot(
+            boundary,
+            uncovered_cells,
+            stop_geo,
+            route_geo,
+            image_path,
+            include_routes,
+        )

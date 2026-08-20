@@ -3,4 +3,5 @@ matplotlib
 pandas
 shapely
 geopy
+gig
 utils_future
