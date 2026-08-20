@@ -3,15 +3,14 @@
     "code": "CMC1",
     "name": "North-South Coastal Trunk",
     "stops": [
-      "Sumathipura",
+      "Hendala Ferry Rd",
       "St Mary's Church, Colombo 15",
-      "Ocean University",
-      "Elie House Park",
+      "Fergusons's Rd",
+      "Bloemendhal Container Yard",
       "Christ Church Cathedral, Mutwal",
       "Kotahena Police",
-      "Sri Kailasanathar Swami Temple",
       "Gold Market",
-      "Lotus Tower",
+      "Min. of Consumer Affairs",
       "Malay St",
       "NTB Bank, Nawam Mw",
       "Liberty Roundabout",
@@ -25,19 +24,16 @@
     "code": "CMC2",
     "name": "Eastern Baseline Trunk",
     "stops": [
-      "Ocean University",
       "Fergusons's Rd",
-      "Madampitiya Cemetary",
-      "St Joseph's Boys School, Grandpas",
+      "Bank of Ceylon, Grandpass",
       "Nawagampura Playground",
       "Maligawatta Muslim Burial Grounds",
-      "Dematagoda Railway",
+      "Orion City",
       "Baseline Rd. Railway Station",
       "Welikada Prison Badminton Courts",
-      "Singer MEGA",
-      "Elvitigala Flats",
-      "Kirula Rd-Baseline Rd",
-      "NIBM, Baseline Rd",
+      "Kynsey Rd-Barnes Pl",
+      "BMICH",
+      "Survey Dept",
       "Canal Bankk Rd-Namdimithra Pl",
       "Amachi, Hampden Ln"
     ]
@@ -49,14 +45,11 @@
       "Port of Colombo",
       "Gold Market",
       "Malay St",
-      "Slave Island Railway Station",
       "NTB Bank, Nawam Mw",
+      "Malay St",
       "Min. of Consumer Affairs",
-      "Lotus Tower",
       "Dialog, Union Place",
       "Zahira College, Deans Rd",
-      "Ananda College, Maradana Rd, Colombo 10",
-      "Jayasekararama Temple",
       "Baseline Rd. Railway Station"
     ]
   },
@@ -65,19 +58,16 @@
     "name": "Core Diagonal",
     "stops": [
       "Gold Market",
-      "Gunasinghe Playground",
-      "People's Bank, Dam Street",
-      "Meeraniya St-Princess Gate",
-      "Legal Draftsman's Dept.",
-      "Lotus Tower",
-      "Zahira College, Deans Rd",
-      "Tower Hall, Theatre",
+      "Kotahena Jr. School",
       "DMT Maligawatta",
-      "Baurs, Grandpass",
-      "R Premadasa Stadium",
+      "Legal Draftsman's Dept.",
+      "Min. of Consumer Affairs",
+      "Zahira College, Deans Rd",
+      "DMT Maligawatta",
+      "Sugathadasa Stadium",
       "Maligawatta Muslim Burial Grounds",
       "De Appu Junction",
-      "Dematagoda Railway"
+      "Orion City"
     ]
   },
   {
@@ -86,36 +76,33 @@
     "stops": [
       "Liberty Roundabout",
       "Dialog, Union Place",
-      "St. Bridget's Primary",
+      "Independence Square",
       "BMICH",
-      "Elvitigala Flats",
       "Pelpola Vipassi Foundation",
-      "Singer MEGA"
+      "Kynsey Rd-Barnes Pl"
     ]
   },
   {
     "code": "CMC6",
     "name": "Inner Northern Cross",
     "stops": [
-      "Elie House Park",
-      "St Lucia's Cathedral, Kotahena",
+      "Bloemendhal Container Yard",
       "Kotahena Jr. School",
-      "Baurs, Grandpass",
       "Sugathadasa Stadium",
-      "St Joseph's Boys School, Grandpas"
+      "Kotahena Jr. School",
+      "Bank of Ceylon, Grandpass"
     ]
   },
   {
     "code": "CMC7",
     "name": "Mid-City Orbital Linear",
     "stops": [
-      "Sri Kailasanathar Swami Temple",
-      "Vivekananda College, Grandpass",
+      "Gold Market",
       "Kotahena Jr. School",
-      "Meeraniya St-Princess Gate",
+      "Sugathadasa Stadium",
       "DMT Maligawatta",
-      "Sri Vajirangana Temple",
-      "Jayasekararama Temple",
+      "Zahira College, Deans Rd",
+      "Baseline Rd. Railway Station",
       "Welikada Prison Badminton Courts"
     ]
   },
@@ -127,8 +114,8 @@
       "Amachi, Hampden Ln",
       "BRC Grounds, Haveloock Rd",
       "Vajirarama Temple",
-      "St. Bridget's Primary",
-      "Singer MEGA"
+      "Independence Square",
+      "Kynsey Rd-Barnes Pl"
     ]
   }
 ]

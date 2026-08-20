@@ -11,6 +11,7 @@ def run_network():
 
 def run_place():
     Place.fill_all_latlng()
+    Place.remove_grid_duplicates()
     Place.analyze_coverage()
     Place.open_random_uncovered_cells_in_google_maps(limit=10)
 

@@ -1,6 +1,7 @@
 import os
 import random
 import webbrowser
+from collections import defaultdict
 from dataclasses import dataclass
 from functools import cache
 from math import floor
@@ -11,7 +12,7 @@ from geopy.geocoders import Nominatim
 from gig import Ent, EntType
 from shapely.geometry import Point
 from shapely.ops import unary_union
-from utils_future import JSONFile, Log
+from utils_future import File, JSONFile, Log
 
 log = Log("Place")
 
@@ -22,13 +23,17 @@ class Place:
     latlng: List[float]
 
     PRECISION = 6
-    GRID_LATITUDE = 0.007
-    GRID_LONGITUDE = 0.007
+    GRID_LATITUDE = 0.006
+    GRID_LONGITUDE = 0.006
     COLOMBO_DSD_IDS = {"LK-1103", "LK-1127"}
 
     @classmethod
     def get_data_file(cls) -> JSONFile:
         return JSONFile(os.path.join("data", "places.json"))
+
+    @classmethod
+    def get_removed_data_file(cls) -> JSONFile:
+        return JSONFile(os.path.join("data", "places.removed.json"))
 
     def fill_latlng(self):
         if self.latlng is not None:
@@ -54,6 +59,79 @@ class Place:
         data_file = cls.get_data_file()
         idx = data_file.read()
         return [cls(name, latlng) for name, latlng in idx.items()]
+
+    @classmethod
+    def get_grid_cell(cls, place):
+        return (
+            floor(place.latlng[0] / cls.GRID_LATITUDE),
+            floor(place.latlng[1] / cls.GRID_LONGITUDE),
+        )
+
+    @classmethod
+    def _distance_to_grid_center(cls, place):
+        latitude, longitude = cls.get_grid_cell(place)
+        center_latitude = (latitude + 0.5) * cls.GRID_LATITUDE
+        center_longitude = (longitude + 0.5) * cls.GRID_LONGITUDE
+        return (place.latlng[0] - center_latitude) ** 2 + (
+            place.latlng[1] - center_longitude
+        ) ** 2
+
+    @classmethod
+    def _rewrite_removed_route_stops(cls, replacements):
+        from cbn.core.Route import Route
+
+        data_file = Route.get_data_file()
+        route_data_list = data_file.read()
+        for route_data in route_data_list:
+            rewritten = [
+                replacements.get(stop, stop) for stop in route_data["stops"]
+            ]
+            route_data["stops"] = [
+                stop
+                for index, stop in enumerate(rewritten)
+                if index == 0 or stop != rewritten[index - 1]
+            ]
+        data_file.write(route_data_list)
+
+    @classmethod
+    def remove_grid_duplicates(cls):
+        groups = defaultdict(list)
+        for place in cls.list():
+            groups[cls.get_grid_cell(place)].append(place)
+
+        kept = []
+        removed = []
+        replacements = {}
+        for group in groups.values():
+            group.sort(
+                key=lambda place: (
+                    cls._distance_to_grid_center(place),
+                    place.name,
+                )
+            )
+            keeper = group[0]
+            kept.append(keeper)
+            removed.extend(group[1:])
+            replacements.update(
+                {place.name: keeper.name for place in group[1:]}
+            )
+
+        cls.get_data_file().write(
+            {
+                place.name: place.latlng
+                for place in sorted(kept, key=lambda place: place.name)
+            }
+        )
+        removed_data_file = cls.get_removed_data_file()
+        removed_idx = (
+            removed_data_file.read() if removed_data_file.exists() else {}
+        )
+        removed_idx.update({place.name: place.latlng for place in removed})
+        removed_data_file.write(dict(sorted(removed_idx.items())))
+        cls._rewrite_removed_route_stops(replacements)
+        log.info(f"Wrote {File(os.path.join('data', 'places.removed.json'))}")
+        log.info(f"Removed {len(removed)} duplicate-grid places")
+        return removed
 
     @classmethod
     @cache

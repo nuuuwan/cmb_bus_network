@@ -303,6 +303,9 @@ class Network:
 
     @staticmethod
     def _plot_uncovered_grid_cells(ax, boundary, uncovered_cells):
+        if not uncovered_cells:
+            return
+
         geometries = [
             box(
                 longitude * Place.GRID_LONGITUDE,
