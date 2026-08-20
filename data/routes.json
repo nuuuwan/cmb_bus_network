@@ -11,7 +11,9 @@
       "Kotahena Police",
       "Sri Kailasanathar Swami Temple",
       "Gold Market",
-      "Slave Island Railway Station",
+      "Lotus Tower",
+      "Malay St",
+      "NTB Bank, Nawam Mw",
       "Liberty Roundabout",
       "RA de Mel Mw-Alfred Pl",
       "Vajirarama Temple",
@@ -23,6 +25,7 @@
     "code": "CMC2",
     "name": "Eastern Baseline Trunk",
     "stops": [
+      "Ocean University",
       "Fergusons's Rd",
       "Madampitiya Cemetary",
       "St Joseph's Boys School, Grandpas",
@@ -35,7 +38,8 @@
       "Elvitigala Flats",
       "Kirula Rd-Baseline Rd",
       "NIBM, Baseline Rd",
-      "Canal Bankk Rd-Namdimithra Pl"
+      "Canal Bankk Rd-Namdimithra Pl",
+      "Amachi, Hampden Ln"
     ]
   },
   {
@@ -43,10 +47,12 @@
     "name": "Central West-East Connector",
     "stops": [
       "Port of Colombo",
+      "Gold Market",
       "Malay St",
       "Slave Island Railway Station",
       "NTB Bank, Nawam Mw",
       "Min. of Consumer Affairs",
+      "Lotus Tower",
       "Dialog, Union Place",
       "Zahira College, Deans Rd",
       "Ananda College, Maradana Rd, Colombo 10",
@@ -61,11 +67,15 @@
       "Gold Market",
       "Gunasinghe Playground",
       "People's Bank, Dam Street",
+      "Meeraniya St-Princess Gate",
       "Legal Draftsman's Dept.",
       "Lotus Tower",
+      "Zahira College, Deans Rd",
       "Tower Hall, Theatre",
       "DMT Maligawatta",
+      "Baurs, Grandpass",
       "R Premadasa Stadium",
+      "Maligawatta Muslim Burial Grounds",
       "De Appu Junction",
       "Dematagoda Railway"
     ]
@@ -75,10 +85,12 @@
     "name": "South-Central Cross",
     "stops": [
       "Liberty Roundabout",
+      "Dialog, Union Place",
       "St. Bridget's Primary",
       "BMICH",
       "Elvitigala Flats",
-      "Pelpola Vipassi Foundation"
+      "Pelpola Vipassi Foundation",
+      "Singer MEGA"
     ]
   },
   {
@@ -88,7 +100,6 @@
       "Elie House Park",
       "St Lucia's Cathedral, Kotahena",
       "Kotahena Jr. School",
-      "Vivekananda College, Grandpass",
       "Baurs, Grandpass",
       "Sugathadasa Stadium",
       "St Joseph's Boys School, Grandpas"
@@ -99,9 +110,12 @@
     "name": "Mid-City Orbital Linear",
     "stops": [
       "Sri Kailasanathar Swami Temple",
+      "Vivekananda College, Grandpass",
+      "Kotahena Jr. School",
       "Meeraniya St-Princess Gate",
       "DMT Maligawatta",
       "Sri Vajirangana Temple",
+      "Jayasekararama Temple",
       "Welikada Prison Badminton Courts"
     ]
   },
