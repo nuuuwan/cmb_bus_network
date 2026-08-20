@@ -5,10 +5,9 @@ from math import asin, cos, inf, isclose, radians, sin, sqrt
 from typing import List
 
 import geopandas as gpd
-import matplotlib.patches as mpatches
 import matplotlib.pyplot as plt
-import pandas as pd
 from matplotlib.lines import Line2D
+from matplotlib.ticker import MultipleLocator
 from shapely.geometry import LineString, Point
 from utils_future import File, Log
 
@@ -177,26 +176,8 @@ class Network:
             crs="EPSG:4326",
         )
 
-    def _get_gnd_geo(self):
-        cmb_gnds = Place.get_cmb_gnds()
-        stop_gnd_ids = [
-            stop.get_gnd().id
-            for stop in self.stops
-            if stop.latlng is not None and stop.get_gnd() is not None
-        ]
-        rows = []
-        for gnd in cmb_gnds:
-            gnd_geo = gnd.geo()
-            gnd_geo["n_places"] = stop_gnd_ids.count(gnd.id)
-            rows.append(gnd_geo)
-        return gpd.GeoDataFrame(pd.concat(rows, ignore_index=True))
-
     def _get_stop_geo(self):
-        stops = [
-            stop
-            for stop in self.stops
-            if stop.latlng is not None and stop.get_gnd() is not None
-        ]
+        stops = [stop for stop in self.stops if stop.latlng is not None]
         return gpd.GeoDataFrame(
             {
                 "name": [stop.name for stop in stops],
@@ -206,49 +187,6 @@ class Network:
             },
             crs="EPSG:4326",
         )
-
-    @staticmethod
-    def _hue_to_rgb(hue):
-        chroma = 1 - abs(2 * 0.85 - 1)
-        x = chroma * (1 - abs((hue / 60) % 2 - 1))
-        m = 0.85 - chroma / 2
-
-        if hue < 60:
-            red, green, blue = chroma, x, 0
-        elif hue < 120:
-            red, green, blue = x, chroma, 0
-        elif hue < 180:
-            red, green, blue = 0, chroma, x
-        elif hue < 240:
-            red, green, blue = 0, x, chroma
-        else:
-            red, green, blue = x, 0, chroma
-
-        return (
-            int((red + m) * 255),
-            int((green + m) * 255),
-            int((blue + m) * 255),
-        )
-
-    @staticmethod
-    def _color_for_n(n, max_n):
-        hue = 0 if max_n == 0 else 240 * (n / max_n)
-        return Network._hue_to_rgb(hue)
-
-    @staticmethod
-    def _plot_gnds(ax, gnd_geo):
-        max_n = gnd_geo["n_places"].max()
-        for _, row in gnd_geo.iterrows():
-            n = row["n_places"]
-            color = Network._color_for_n(n, max_n)
-            gpd.GeoDataFrame([row]).plot(
-                ax=ax,
-                color=f"#{color[0]:02x}{color[1]:02x}{color[2]:02x}",
-                edgecolor="gray",
-                alpha=0.7,
-                linewidth=0.5,
-            )
-        return max_n
 
     @staticmethod
     def _get_route_memberships(route_geo):
@@ -351,15 +289,7 @@ class Network:
             )
 
     @staticmethod
-    def _add_legend(ax, gnd_geo, route_geo, max_n):
-        unique_ns = sorted(gnd_geo["n_places"].unique())
-        legend_patches = [
-            mpatches.Patch(
-                color=f"#{'%02x%02x%02x' % Network._color_for_n(n, max_n)}",
-                label=f"{n} place{'s' if n != 1 else ''}",
-            )
-            for n in unique_ns
-        ]
+    def _add_route_legend(ax, route_geo):
         colors = plt.get_cmap("tab10").colors
         route_lines = [
             Line2D(
@@ -372,29 +302,45 @@ class Network:
             for route_index, (_, route) in enumerate(route_geo.iterrows())
         ]
         ax.legend(
-            handles=legend_patches + route_lines,
-            title="Places and Routes",
+            handles=route_lines,
+            title="Routes",
             loc="upper left",
         )
 
     @staticmethod
-    def _render_plot(gnd_geo, stop_geo, route_geo, image_path):
+    def _add_grid(ax):
+        grid_color = "#dddddd"
+        ax.xaxis.set_major_locator(MultipleLocator(Place.GRID_LONGITUDE))
+        ax.yaxis.set_major_locator(MultipleLocator(Place.GRID_LATITUDE))
+        ax.grid(color=grid_color, linewidth=0.6)
+        ax.tick_params(colors=grid_color, labelsize=7, length=0)
+        for spine in ax.spines.values():
+            spine.set_visible(False)
+
+    @staticmethod
+    def _render_plot(stop_geo, route_geo, image_path, include_routes):
         fig, ax = plt.subplots(figsize=(24, 24))
-        max_n = Network._plot_gnds(ax, gnd_geo)
-        Network._plot_routes(ax, route_geo)
+        if include_routes:
+            Network._plot_routes(ax, route_geo)
         Network._plot_stops(ax, stop_geo, route_geo)
-        Network._add_legend(ax, gnd_geo, route_geo, max_n)
-        ax.set_title("Bus Routes, Places, and GND Boundaries in Colombo")
+        if include_routes:
+            Network._add_route_legend(ax, route_geo)
+        title = (
+            "Bus Routes and Stops in Colombo"
+            if include_routes
+            else "Stops in Colombo"
+        )
+        ax.set_title(title)
         ax.set_aspect("equal")
-        ax.axis("off")
+        Network._add_grid(ax)
         os.makedirs(os.path.dirname(image_path), exist_ok=True)
         plt.savefig(image_path, dpi=300, bbox_inches="tight")
         log.info(f"Wrote {File(image_path)}")
         plt.close(fig)
 
-    def plot(self):
-        gnd_geo = self._get_gnd_geo()
+    def plot(self, include_routes=True):
         stop_geo = self._get_stop_geo()
         route_geo = self._get_route_geo()
-        image_path = os.path.join("images", "places.png")
-        self._render_plot(gnd_geo, stop_geo, route_geo, image_path)
+        image_name = "places.png" if include_routes else "stops.png"
+        image_path = os.path.join("images", image_name)
+        self._render_plot(stop_geo, route_geo, image_path, include_routes)
