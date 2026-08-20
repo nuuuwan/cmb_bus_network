@@ -2,15 +2,14 @@ import os
 import webbrowser
 from dataclasses import dataclass
 from functools import cache
+from typing import List
 
 import geopandas as gpd
-import matplotlib.patches as mpatches
-import matplotlib.pyplot as plt
 import pandas as pd
 from geopy.geocoders import Nominatim
 from gig import Ent, EntType
 from shapely.geometry import Point
-from utils_future import File, JSONFile, Log
+from utils_future import JSONFile, Log
 
 log = Log("Place")
 
@@ -18,17 +17,17 @@ log = Log("Place")
 @dataclass
 class Place:
     name: str
-    latlng: list[float]
+    latlng: List[float]
 
     PRECISION = 6
 
     @classmethod
     def get_data_file(cls) -> JSONFile:
-        return JSONFile("data", "places.json")
+        return JSONFile(os.path.join("data", "places.json"))
 
     @classmethod
     def get_gnd_data_file(cls) -> JSONFile:
-        return JSONFile("data", "places.gnd.json")
+        return JSONFile(os.path.join("data", "places.gnd.json"))
 
     @staticmethod
     def get_cmb_gnds():
@@ -250,138 +249,6 @@ class Place:
         log.info(f"Covered GNDs: {n_covered}")
         log.info(f"Coverage: {p_covered:.2%}")
         cls.save_gnd_map()
-
-    @classmethod
-    def _get_gnd_geo(cls):
-        cmb_gnds = cls.get_cmb_gnds()
-        place_gnd_ids = [
-            place.get_gnd().id
-            for place in cls.list()
-            if place.latlng is not None and place.get_gnd() is not None
-        ]
-        rows = []
-        for gnd in cmb_gnds:
-            gnd_geo = gnd.geo()
-            n_places = place_gnd_ids.count(gnd.id)
-            gnd_geo["n_places"] = n_places
-            rows.append(gnd_geo)
-        return gpd.GeoDataFrame(pd.concat(rows, ignore_index=True))
-
-    @classmethod
-    def _get_place_geo(cls):
-        places = [
-            place
-            for place in cls.list()
-            if place.latlng is not None and place.get_gnd() is not None
-        ]
-        return gpd.GeoDataFrame(
-            {
-                "name": [place.name for place in places],
-                "geometry": [
-                    Point(place.latlng[1], place.latlng[0]) for place in places
-                ],
-            },
-            crs="EPSG:4326",
-        )
-
-    @staticmethod
-    def _hue_to_rgb(hue):
-        chroma = 1 - abs(2 * 0.85 - 1)
-        x = chroma * (1 - abs((hue / 60) % 2 - 1))
-        m = 0.85 - chroma / 2
-
-        if hue < 60:
-            red, green, blue = chroma, x, 0
-        elif hue < 120:
-            red, green, blue = x, chroma, 0
-        elif hue < 180:
-            red, green, blue = 0, chroma, x
-        elif hue < 240:
-            red, green, blue = 0, x, chroma
-        else:
-            red, green, blue = x, 0, chroma
-
-        return (
-            int((red + m) * 255),
-            int((green + m) * 255),
-            int((blue + m) * 255),
-        )
-
-    @staticmethod
-    def _color_for_n(n, max_n):
-        hue = 0 if max_n == 0 else 240 * (n / max_n)
-        return Place._hue_to_rgb(hue)
-
-    @staticmethod
-    def _plot_gnds(ax, gnd_geo):
-        max_n = gnd_geo["n_places"].max()
-        for _, row in gnd_geo.iterrows():
-            n = row["n_places"]
-            color = Place._color_for_n(n, max_n)
-            gpd.GeoDataFrame([row]).plot(
-                ax=ax,
-                color=f"#{color[0]:02x}{color[1]:02x}{color[2]:02x}",
-                edgecolor="gray",
-                alpha=0.7,
-                linewidth=0.5,
-            )
-        return max_n
-
-    @staticmethod
-    def _plot_places(ax, place_geo):
-        place_geo.plot(
-            ax=ax,
-            color="black",
-            markersize=50,
-            edgecolor="black",
-            linewidth=0.5,
-        )
-        for _, row in place_geo.iterrows():
-            ax.annotate(
-                row["name"],
-                (row.geometry.x, row.geometry.y),
-                xytext=(5, 5),
-                textcoords="offset points",
-                fontsize=7,
-                color="black",
-            )
-
-    @staticmethod
-    def _add_legend(ax, gnd_geo, max_n):
-        unique_ns = sorted(gnd_geo["n_places"].unique())
-        legend_patches = [
-            mpatches.Patch(
-                color=f"#{'%02x%02x%02x' % Place._color_for_n(n, max_n)}",
-                label=f"{n} place{'s' if n != 1 else ''}",
-            )
-            for n in unique_ns
-        ]
-        ax.legend(
-            handles=legend_patches,
-            title="Number of Places",
-            loc="upper left",
-        )
-
-    @staticmethod
-    def _render_plot(gnd_geo, place_geo, image_path):
-        fig, ax = plt.subplots(figsize=(24, 24))
-        max_n = Place._plot_gnds(ax, gnd_geo)
-        Place._plot_places(ax, place_geo)
-        Place._add_legend(ax, gnd_geo, max_n)
-        ax.set_title("Places and GND Boundaries in Colombo")
-        ax.set_aspect("equal")
-        ax.axis("off")
-        os.makedirs(os.path.dirname(image_path), exist_ok=True)
-        plt.savefig(image_path, dpi=300, bbox_inches="tight")
-        log.info(f"Wrote {File(image_path)}")
-        plt.close(fig)
-
-    @classmethod
-    def plot(cls):
-        gnd_geo = cls._get_gnd_geo()
-        place_geo = cls._get_place_geo()
-        image_path = os.path.join("images", "places.png")
-        cls._render_plot(gnd_geo, place_geo, image_path)
 
     @classmethod
     def open_uncovered_gnds_in_google_maps(cls, limit=10):
