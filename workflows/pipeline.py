@@ -9,11 +9,12 @@ def run_network():
     network.Analyse()
 
 
-def run_all():
+def run_place():
     Place.fill_all_latlng()
     Place.analyze_coverage()
-    run_network()
+    Place.open_random_uncovered_cells_in_google_maps(limit=10)
 
 
 if __name__ == "__main__":
-    run_all()
+    run_place()
+    run_network()
